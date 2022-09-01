@@ -374,7 +374,7 @@ def find_fluxes(polygon, sources, exclude, fitsfile):#, export):
 
     insidemaskhdu = fits.PrimaryHDU(insidemask, header=header_new)
     outname = fitsfile.replace(".fits", "_inmask.fits")
-    insidemaskhdr.writeto(outname, overwrite=True)
+    insidemaskhdu.writeto(outname, overwrite=True)
 
     #    source_flux = 0.0
 #    for x,y in zip(local_sources.x,local_sources.y):
