@@ -362,6 +362,7 @@ def find_fluxes(polygon, sources, exclude, fitsfile):#, export):
     rms = np.std(bkg_list)
 
     header_new['NBEAMS'] = nbeams
+    header_new['PPBEAM'] = beamvolume / (pix2deg**2)
     
     new = fits.PrimaryHDU(mask,header=header_new) #create new hdu
     outname = fitsfile.replace(".fits","_mask.fits")
