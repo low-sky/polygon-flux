@@ -314,9 +314,12 @@ def find_fluxes(polygon, sources, exclude, fitsfile):#, export):
     # Sadly astropy.io.fits is doing some sort of clever interpretation of this; have to do it in a loop instead
     # np.sum(hdu[0].data[indexes[np.where(inside)]])
     total_flux = 0.0
+    insidemask = np.zeros(hdu[0].data.shape, dtype=int)
+    
     for ix in indexes[np.where(inside)]:
        if not np.isnan(hdu[0].data[ix[1],ix[0]]):
            total_flux += hdu[0].data[ix[1],ix[0]] # In Jy/pix
+           insidemask[ix[1], ix[0]] = 1
 #       else:
 #           print "WARNING, NAN detected at x = {0}, y={1}!".format(ix[0], ix[1])
        
@@ -358,12 +361,22 @@ def find_fluxes(polygon, sources, exclude, fitsfile):#, export):
 # RMS of this area in Jy/pix
     rms = np.std(bkg_list)
 
+    header_new['NBEAMS'] = nbeams
+    
     new = fits.PrimaryHDU(mask,header=header_new) #create new hdu
     outname = fitsfile.replace(".fits","_mask.fits")
     newlist = fits.HDUList([new]) #create new hdulist
     newlist.writeto(outname,overwrite=True)
 
-#    source_flux = 0.0
+    binmask = fits.PrimaryHDU(np.isfinite(mask), header=header_new)
+    outname = fitsfile.replace(".fits", "_outmask.fits")
+    binmask.writeto(outname, overwrite=True)
+
+    insidemaskhdu = fits.PrimaryHDU(insidemask, header=header_new)
+    outname = fitsfile.replace(".fits", "_inmask.fits")
+    insidemaskhdr.writeto(outname, overwrite=True)
+
+    #    source_flux = 0.0
 #    for x,y in zip(local_sources.x,local_sources.y):
 #       if path.contains_points([[x,y]]):
 #    # Search for the local maximum within a beam-width
