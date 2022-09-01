@@ -368,7 +368,7 @@ def find_fluxes(polygon, sources, exclude, fitsfile):#, export):
     newlist = fits.HDUList([new]) #create new hdulist
     newlist.writeto(outname,overwrite=True)
 
-    binmask = fits.PrimaryHDU(np.isfinite(mask), header=header_new)
+    binmask = fits.PrimaryHDU(np.isfinite(mask).astype(int), header=header_new)
     outname = fitsfile.replace(".fits", "_outmask.fits")
     binmask.writeto(outname, overwrite=True)
 
